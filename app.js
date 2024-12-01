@@ -123,39 +123,44 @@ app.get("/search", async (req, res) => {
     try {
         const query = req.query.q || ''; // Get the search query from the request
         const regex = new RegExp(query, 'i'); // Create a case-insensitive regex
-        
-        // Initialize search conditions
-        const conditions = [];
 
-        // Add string field matches
-        if (query) {
-            conditions.push(
-                { subject: regex },
-                { description: regex },
-                { location: regex }
-            );
-        }
-
-        // Check if query can be parsed as a number
+        // Parse potential number from the query
         const parsedNumber = parseFloat(query);
-        if (!isNaN(parsedNumber)) {
+        const isNumber = !isNaN(parsedNumber);
+
+        // Add conditions for text-based fields
+        const conditions = [
+            { subject: regex },
+            { description: regex },
+            { location: regex },
+        ];
+
+        // Check for numbers or partial matches like "space 10"
+        if (isNumber || query.toLowerCase().includes('space')) {
+            // Add numeric match for spaces
             conditions.push(
-                { price: parsedNumber },
                 { availablespaces: parsedNumber }
             );
         }
 
-        // Build the query
-        const searchQuery = conditions.length > 0 ? { $or: conditions } : {};
+        // Add numeric match for price
+        if (isNumber) {
+            conditions.push(
+                { price: parsedNumber }
+            );
+        }
 
-        // Query the database
-        const results = await db.collection('lessons').find(searchQuery).toArray();
+        // Query MongoDB with the combined conditions
+        const results = await db.collection('lessons').find({
+            $or: conditions
+        }).toArray();
 
         res.json(results); // Return the filtered results as JSON
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 });
+
 
 
 // Error handling middleware
