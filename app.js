@@ -160,6 +160,8 @@ app.get("/search", async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 });
+console.log('Search Conditions:', conditions);
+console.log('Results:', results);
 
 
 
