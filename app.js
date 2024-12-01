@@ -119,24 +119,44 @@ app.get("/collections/:collectionName/:max/:sortAspect/:sortAscDesc", async (req
     });
 });
 
-app.get("/search", async (req, res) => { 
+app.get("/search", async (req, res) => {
     try {
         const query = req.query.q || ''; // Get the search query from the request
         const regex = new RegExp(query, 'i'); // Create a case-insensitive regex
-        const results = await db.collection('lessons').find({
-            $or: [
-                {subject: regex},
-                {description: regex},
-                {location: regex},
-                {price: regex},
-                {availablespaces: regex}
-            ]
-        }).toArray();
+        
+        // Initialize search conditions
+        const conditions = [];
+
+        // Add string field matches
+        if (query) {
+            conditions.push(
+                { subject: regex },
+                { description: regex },
+                { location: regex }
+            );
+        }
+
+        // Check if query can be parsed as a number
+        const parsedNumber = parseFloat(query);
+        if (!isNaN(parsedNumber)) {
+            conditions.push(
+                { price: parsedNumber },
+                { availablespaces: parsedNumber }
+            );
+        }
+
+        // Build the query
+        const searchQuery = conditions.length > 0 ? { $or: conditions } : {};
+
+        // Query the database
+        const results = await db.collection('lessons').find(searchQuery).toArray();
+
         res.json(results); // Return the filtered results as JSON
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 });
+
 
 // Error handling middleware
 app.use((req, res) => {
