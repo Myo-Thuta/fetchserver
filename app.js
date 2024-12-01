@@ -139,10 +139,10 @@ app.get("/search", async (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
-    console.error(err);
-    res.status(500).send({ error: err.message || "An error occurred" });
-});
+// app.use((err, req, res, next) => {
+//     console.error(err);
+//     res.status(404).send({ error: err.message || "An error occurred" });
+// });
 
 app.use((req, res) => {
     res.status(404).send("Error: Resource not found");
