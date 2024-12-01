@@ -123,46 +123,39 @@ app.get("/search", async (req, res) => {
     try {
         const query = req.query.q || ''; // Get the search query from the request
         const regex = new RegExp(query, 'i'); // Create a case-insensitive regex
+        
+        // Initialize search conditions
+        const conditions = [];
 
-        // Parse potential number from the query
-        const parsedNumber = parseFloat(query);
-        const isNumber = !isNaN(parsedNumber);
-
-        // Add conditions for text-based fields
-        const conditions = [
-            { subject: regex },
-            { description: regex },
-            { location: regex },
-        ];
-
-        // Check for numbers or partial matches like "space 10"
-        if (isNumber || query.toLowerCase().includes('space')) {
-            // Add numeric match for spaces
+        // Add string field matches
+        if (query) {
             conditions.push(
+                { subject: regex },
+                { description: regex },
+                { location: regex }
+            );
+        }
+
+        // Check if query can be parsed as a number
+        const parsedNumber = parseFloat(query);
+        if (!isNaN(parsedNumber)) {
+            conditions.push(
+                { price: parsedNumber },
                 { availablespaces: parsedNumber }
             );
         }
 
-        // Add numeric match for price
-        if (isNumber) {
-            conditions.push(
-                { price: parsedNumber }
-            );
-        }
+        // Build the query
+        const searchQuery = conditions.length > 0 ? { $or: conditions } : {};
 
-        // Query MongoDB with the combined conditions
-        const results = await db.collection('lessons').find({
-            $or: conditions
-        }).toArray();
+        // Query the database
+        const results = await db.collection('lessons').find(searchQuery).toArray();
 
         res.json(results); // Return the filtered results as JSON
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 });
-console.log('Search Conditions:', conditions);
-console.log('Results:', results);
-
 
 
 // Error handling middleware
