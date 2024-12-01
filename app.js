@@ -1,6 +1,6 @@
 const express = require("express");
 const path = require("path");
-// const cors = require("cors");
+const cors = require("cors");
 const morgan = require("morgan");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const propertiesReader = require("properties-reader");
@@ -33,7 +33,7 @@ connectToDatabase(); // Ensure this is called when the app starts
 // Initialize Express App
 const app = express();
 app.set("json spaces", 3);
-// app.use(cors());
+app.use(cors());
 app.use(morgan("short"));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, "images")));
