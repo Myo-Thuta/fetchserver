@@ -33,7 +33,9 @@ connectToDatabase(); // Ensure this is called when the app starts
 // Initialize Express App
 const app = express();
 app.set("json spaces", 3);
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
 app.use(morgan("short"));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, "images")));
