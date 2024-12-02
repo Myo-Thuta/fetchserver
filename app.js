@@ -33,11 +33,7 @@ connectToDatabase(); // Ensure this is called when the app starts
 // Initialize Express App
 const app = express();
 app.set("json spaces", 3);
-app.use(cors({
-    origin: 'https://myo-thuta.github.io', // Replace with your frontend's domain
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true, // Include if requests need credentials like cookies
-}));
+app.use(cors());
 app.use(morgan("short"));
 app.use(express.json());
 app.use(express.static(path.resolve(__dirname, "images")));
