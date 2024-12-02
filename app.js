@@ -104,49 +104,6 @@ app.put("/collections/:collectionName/:id", async (req, res, next) => {
     }
 });
 
-app.post("/collections/orders", async (req, res, next) => {
-    try {
-        const order = req.body;
-
-        // Validate required fields
-        if (!order.name || !order.email || !order.lessonIDs || !Array.isArray(order.lessonIDs)) {
-            return res.status(400).send({ msg: "Invalid order data. Ensure all required fields are provided." });
-        }
-
-        console.log("Received order:", order); // Debugging received data
-
-        // Insert into database
-        const result = await db.collection("orders").insertOne(order);
-        console.log("Order inserted with ID:", result.insertedId); // Debugging insert operation
-
-        res.status(201).send({ msg: "Order created successfully", orderID: result.insertedId });
-    } catch (error) {
-        console.error("Error processing order:", error); // Debugging error
-        res.status(500).send({ msg: "An error occurred while processing your order. Please try again." });
-    }
-});
-
-app.put("/collections/lessons/:id", async (req, res, next) => {
-    try {
-        const { id } = req.params;
-        const { availablespaces } = req.body;
-
-        if (availablespaces === undefined) {
-            return res.status(400).send({ msg: "availablespaces is required" });
-        }
-
-        const result = await db.collection("lessons").updateOne(
-            { _id: new ObjectId(id) },
-            { $set: { availablespaces } }
-        );
-
-        res.send(result.matchedCount === 1 ? { msg: "Lesson updated" } : { msg: "Lesson not found" });
-    } catch (error) {
-        next(error);
-    }
-});
-
-
 app.get("/collections/:collectionName/:max/:sortAspect/:sortAscDesc", async (req, res, next) => {
     // TODO: Validate params
     var max = parseInt(req.params.max, 10); // base 10
