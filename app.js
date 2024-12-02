@@ -87,19 +87,34 @@ app.post("/collections/:collectionName", async (req, res, next) => {
 //post for order
 app.post("/collections/orders", async (req, res, next) => {
     try {
+        // Extract order data from the request body
         const { name, email, address, city, postcode, phone, lessonIDs } = req.body;
 
+        // Basic validation
         if (!name || !email || !address || !city || !postcode || !phone || !Array.isArray(lessonIDs)) {
             return res.status(400).send({ error: "Invalid order data" });
         }
 
-        const order = { name, email, address, city, postcode, phone, lessonIDs };
+        // Create the order object
+        const order = {
+            name,
+            email,
+            address,
+            city,
+            postcode,
+            phone,
+            lessonIDs,
+        };
+
+        // Insert the order into the 'orders' collection
         const result = await db.collection("orders").insertOne(order);
+
         res.status(201).send({ message: "Order created successfully", _id: result.insertedId });
     } catch (error) {
         next(error);
     }
 });
+
 
 app.delete("/collections/:collectionName/:id", async (req, res, next) => {
     try {
