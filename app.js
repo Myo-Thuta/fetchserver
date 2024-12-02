@@ -82,6 +82,39 @@ app.post("/collections/:collectionName", async (req, res, next) => {
     }
 });
 
+//post for order
+app.post("/collections/users", async (req, res, next) => {
+    try {
+        // Extract user data from the request body
+        const { name, email, address, city, postcode, phone, lessonIDs } = req.body;
+
+        // Basic validation
+        if (!name || !email || !address || !city || !postcode || !phone || !Array.isArray(lessonIDs)) {
+            return res.status(400).send({ error: "Invalid user data" });
+        }
+
+        // Create the user object
+        const user = {
+            name,
+            email,
+            address,
+            city,
+            postcode,
+            phone,
+            lessonIDs,
+            createdAt: new Date() // Add a creation timestamp
+        };
+
+        // Insert the user into the 'users' collection
+        const result = await db.collection("users").insertOne(user);
+
+        res.status(201).send({ message: "User created successfully", userId: result.insertedId });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
 app.delete("/collections/:collectionName/:id", async (req, res, next) => {
     try {
         const result = await req.collection.deleteOne({ _id: new ObjectId(req.params.id) });
