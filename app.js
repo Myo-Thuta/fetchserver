@@ -126,7 +126,6 @@ app.post("/collections/orders", async (req, res, next) => {
     }
 });
 
-
 app.get("/collections/:collectionName/:max/:sortAspect/:sortAscDesc", async (req, res, next) => {
     // TODO: Validate params
     var max = parseInt(req.params.max, 10); // base 10
