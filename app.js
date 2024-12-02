@@ -87,7 +87,7 @@ app.post("/collections/:collectionName", async (req, res, next) => {
 //post for order
 app.post("/collections/orders", async (req, res, next) => {
     try {
-        // Extract user data from the request body
+        // Extract order data from the request body
         const { name, email, address, city, postcode, phone, lessonIDs } = req.body;
 
         // Basic validation
@@ -95,7 +95,7 @@ app.post("/collections/orders", async (req, res, next) => {
             return res.status(400).send({ error: "Invalid order data" });
         }
 
-        // Create the user object
+        // Create the order object
         const order = {
             name,
             email,
@@ -106,7 +106,7 @@ app.post("/collections/orders", async (req, res, next) => {
             lessonIDs,
         };
 
-        // Insert the user into the 'orders' collection
+        // Insert the order into the 'orders' collection
         const result = await db.collection("orders").insertOne(order);
 
         res.status(201).send({ message: "Order created successfully", _id: result.insertedId });
