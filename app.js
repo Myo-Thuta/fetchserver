@@ -101,8 +101,6 @@ app.post("/collections/orders", async (req, res, next) => {
     }
 });
 
-
-
 app.delete("/collections/:collectionName/:id", async (req, res, next) => {
     try {
         const result = await req.collection.deleteOne({ _id: new ObjectId(req.params.id) });
