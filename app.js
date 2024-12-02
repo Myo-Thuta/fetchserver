@@ -126,6 +126,27 @@ app.post("/collections/orders", async (req, res, next) => {
     }
 });
 
+app.put("/collections/lessons/:id", async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { availablespaces } = req.body;
+
+        if (availablespaces === undefined) {
+            return res.status(400).send({ msg: "availablespaces is required" });
+        }
+
+        const result = await db.collection("lessons").updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { availablespaces } }
+        );
+
+        res.send(result.matchedCount === 1 ? { msg: "Lesson updated" } : { msg: "Lesson not found" });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
 app.get("/collections/:collectionName/:max/:sortAspect/:sortAscDesc", async (req, res, next) => {
     // TODO: Validate params
     var max = parseInt(req.params.max, 10); // base 10
