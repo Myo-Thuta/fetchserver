@@ -115,16 +115,6 @@ app.post("/collections/orders", async (req, res, next) => {
     }
 });
 
-
-app.delete("/collections/:collectionName/:id", async (req, res, next) => {
-    try {
-        const result = await req.collection.deleteOne({ _id: new ObjectId(req.params.id) });
-        res.send(result.deletedCount === 1 ? { msg: "success" } : { msg: "error" });
-    } catch (error) {
-        next(error);
-    }
-});
-
 app.put("/collections/:collectionName/:id", async (req, res, next) => {
     try {
         const result = await req.collection.updateOne(
