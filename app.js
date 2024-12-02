@@ -75,14 +75,14 @@ app.get("/collections/:collectionName/:id", async (req, res, next) => {
     }
 });
 
-// app.post("/collections/:collectionName", async (req, res, next) => {
-//     try {
-//         const result = await req.collection.insertOne(req.body);
-//         res.send(result);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+app.post("/collections/:collectionName", async (req, res, next) => {
+    try {
+        const result = await req.collection.insertOne(req.body);
+        res.send(result);
+    } catch (error) {
+        next(error);
+    }
+});
 
 //post for order
 app.post("/collections/orders", async (req, res, next) => {
