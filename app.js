@@ -106,10 +106,10 @@ app.post("/collections/orders", async (req, res, next) => {
             lessonIDs,
         };
 
-        // Insert the user into the 'users' collection
+        // Insert the user into the 'orders' collection
         const result = await db.collection("orders").insertOne(order);
 
-        res.status(201).send({ message: "Order created successfully", userId: result.insertedId });
+        res.status(201).send({ message: "Order created successfully", _id: result.insertedId });
     } catch (error) {
         next(error);
     }
