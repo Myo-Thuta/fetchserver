@@ -104,6 +104,19 @@ app.put("/collections/:collectionName/:id", async (req, res, next) => {
     }
 });
 
+app.post("/collections/orders", async (req, res, next) => {
+    try {
+        const order = req.body;
+        if (!order.name || !order.lessonIDs || !order.email) {
+            return res.status(400).send({ msg: "Invalid order data" });
+        }
+        const result = await db.collection("orders").insertOne(order);
+        res.status(201).send({ msg: "Order created successfully", orderID: result.insertedId });
+    } catch (error) {
+        next(error);
+    }
+});
+
 app.get("/collections/:collectionName/:max/:sortAspect/:sortAscDesc", async (req, res, next) => {
     // TODO: Validate params
     var max = parseInt(req.params.max, 10); // base 10
